@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>What If the Machine You Rely On Today Didn't Exist Yesterday? — UNITECH</title>
+<meta name="description" content="20 years, 8 machines, one question: can you build it? The engineering story behind Ecomatic, SDS, UniWash, UniStretch and more.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%2314202B'/%3E%3Crect x='8' y='8' width='16' height='16' fill='none' stroke='%23C1631D' stroke-width='2.4'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400;1,8..60,500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EEF1EF;
+    --paper-deep:#E4E9E7;
+    --ink:#14202B;
+    --ink-soft:#4C5B66;
+    --accent:#C1631D;
+    --accent-deep:#9A4B14;
+    --accent-tint:#F1D9BE;
+    --rule:#C7D2CF;
+    --rule-soft:#D9E0DE;
+    --white:#FBFCFB;
+    --radius:2px;
+    --measure:640px;
+    --font-display:'Space Grotesk', sans-serif;
+    --font-body:'Source Serif 4', serif;
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior:smooth; scroll-padding-top:24px; }
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+  }
+
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font-body);
+    font-size:17px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+    padding-top:env(safe-area-inset-top,0px);
+    padding-bottom:env(safe-area-inset-bottom,0px);
+  }
+
+  ::selection{ background:var(--accent-tint); color:var(--ink); }
+
+  a{ color:var(--accent-deep); }
+
+  /* focus visibility */
+  a:focus-visible, button:focus-visible{
+    outline:2px solid var(--accent-deep);
+    outline-offset:3px;
+  }
+
+  /* ---------- progress rail ---------- */
+  #progress{
+    position:fixed; top:0; left:0; height:3px; width:0%;
+    background:var(--accent); z-index:60;
+    transition:width 80ms linear;
+  }
+
+  /* ---------- blueprint grid texture ---------- */
+  .grid-bg{
+    background-image:
+      linear-gradient(var(--rule-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--rule-soft) 1px, transparent 1px);
+    background-size:34px 34px;
+    background-position:center top;
+  }
+
+  /* ---------- hero ---------- */
+  .hero{
+    position:relative;
+    padding:104px 24px 88px;
+    overflow:hidden;
+    border-bottom:1px solid var(--rule);
+  }
+
+  .hero-flag {
+  width: 300px;
+  height: 220px;
+  display: block;
+  filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.12));
+}
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background:
+      repeating-linear-gradient(90deg, var(--rule-soft) 0 1px, transparent 1px 34px),
+      repeating-linear-gradient(0deg, var(--rule-soft) 0 1px, transparent 1px 34px);
+    mask-image:radial-gradient(ellipse 90% 70% at 50% 0%, black 40%, transparent 85%);
+    opacity:0.9;
+  }
+  .hero-inner{
+    position:relative;
+    max-width:960px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:36px;
+    align-items:center;
+  }
+  @media (min-width:880px){
+    .hero-inner{ grid-template-columns:1.15fr 0.85fr; gap:48px; }
+  }
+  .kicker{
+    font-family:var(--font-display);
+    font-size:13px;
+    font-weight:600;
+    color:var(--accent-deep);
+    letter-spacing:0.02em;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin:0 0 22px;
+  }
+  .kicker .dash{ width:28px; height:1px; background:var(--accent-deep); display:inline-block; }
+  h1{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:clamp(2.1rem, 4.6vw, 3.4rem);
+    line-height:1.08;
+    letter-spacing:-0.01em;
+    margin:0 0 20px;
+    color:var(--ink);
+  }
+  .dek{
+    font-family:var(--font-body);
+    font-style:italic;
+    font-size:1.2rem;
+    color:var(--ink-soft);
+    max-width:46ch;
+    margin:0;
+  }
+  .hero-schematic{ width:100%; height:auto; }
+  .hero-schematic .draw{
+    fill:none;
+    stroke:var(--ink);
+    stroke-width:1.6;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    stroke-dasharray:1400;
+    stroke-dashoffset:1400;
+    animation:draw 2.6s ease-out forwards;
+  }
+  .hero-schematic .draw.accent{ stroke:var(--accent); animation-delay:0.25s; }
+  .hero-schematic .dot{
+    fill:var(--accent);
+    opacity:0;
+    animation:appear 0.6s ease-out forwards;
+    animation-delay:2.4s;
+  }
+  @keyframes draw{ to{ stroke-dashoffset:0; } }
+  @keyframes appear{ to{ opacity:1; } }
+  @media (prefers-reduced-motion: reduce){
+    .hero-schematic .draw{ stroke-dashoffset:0; animation:none; }
+    .hero-schematic .dot{ opacity:1; animation:none; }
+  }
+
+  /* ---------- layout with timeline rail ---------- */
+  .article-wrap{
+    max-width:1100px;
+    margin:0 auto;
+    padding:0 24px;
+    display:grid;
+    grid-template-columns:1fr;
+    gap:0;
+  }
+  @media (min-width:1020px){
+    .article-wrap{ grid-template-columns:150px minmax(0,var(--measure)); gap:40px; justify-content:center; }
+  }
+
+  .rail{
+    display:none;
+  }
+  @media (min-width:1020px){
+    .rail{
+      display:block;
+      position:sticky;
+      top:40px;
+      align-self:start;
+      height:fit-content;
+      padding-top:64px;
+    }
+    .rail ol{ list-style:none; margin:0; padding:0; position:relative; }
+    .rail ol::before{
+      content:"";
+      position:absolute; left:5px; top:6px; bottom:6px; width:1px;
+      background:var(--rule);
+    }
+    .rail li{ position:relative; padding:0 0 30px 26px; }
+    .rail li:last-child{ padding-bottom:0; }
+    .rail button{
+      background:none; border:none; padding:0; cursor:pointer;
+      font-family:var(--font-display); font-size:13px; color:var(--ink-soft);
+      text-align:left; display:block; width:100%;
+    }
+    .rail button::before{
+      content:"";
+      position:absolute; left:0px; top:2px;
+      width:11px; height:11px; border-radius:50%;
+      background:var(--paper); border:1.5px solid var(--rule);
+      transition:background 200ms, border-color 200ms, transform 200ms;
+    }
+    .rail li.active button{ color:var(--ink); font-weight:600; }
+    .rail li.active button::before{
+      background:var(--accent); border-color:var(--accent);
+      transform:scale(1.15);
+    }
+  }
+
+  main{ min-width:0; padding:64px 0 40px; }
+
+  .lede{
+    font-size:1.18rem;
+    max-width:var(--measure);
+    color:var(--ink);
+  }
+  .lede p{ margin:0 0 20px; }
+  .lede em{ font-style:italic; color:var(--ink); }
+
+  section.milestone{
+    padding:52px 0;
+    border-top:1px solid var(--rule);
+    scroll-margin-top:24px;
+  }
+  section.milestone:first-of-type{ border-top:none; }
+
+  .m-head{
+    display:flex;
+    align-items:flex-start;
+    gap:18px;
+    margin-bottom:16px;
+  }
+  .m-icon{
+    flex:none;
+    width:52px; height:52px;
+    border:1px solid var(--rule);
+    border-radius:var(--radius);
+    background:var(--white);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .m-icon svg{ width:30px; height:30px; stroke:var(--ink); fill:none; stroke-width:1.5; }
+  .m-icon svg .accent{ stroke:var(--accent); }
+  .m-titles{ padding-top:2px; }
+  .m-year{
+    font-family:var(--font-display);
+    font-size:13px;
+    font-weight:600;
+    color:var(--accent-deep);
+    letter-spacing:0.04em;
+    display:block;
+    margin-bottom:4px;
+  }
+  h2{
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:1.5rem;
+    line-height:1.25;
+    margin:0;
+    color:var(--ink);
+  }
+  .milestone p{ max-width:var(--measure); margin:0 0 16px; }
+  .milestone p:last-child{ margin-bottom:0; }
+  .milestone strong{ color:var(--ink); font-weight:600; }
+
+  blockquote.pull{
+    margin:56px 0;
+    padding:0 0 0 22px;
+    border-left:2px solid var(--accent);
+    font-family:var(--font-body);
+    font-style:italic;
+    font-size:1.3rem;
+    line-height:1.5;
+    color:var(--ink);
+    max-width:var(--measure);
+  }
+  blockquote.pull cite{
+    display:block;
+    font-style:normal;
+    font-family:var(--font-display);
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:10px;
+  }
+
+  .closing{
+    padding:52px 0 8px;
+    border-top:1px solid var(--rule);
+  }
+
+  .cta{
+    margin:44px 0 0;
+    padding:34px 32px;
+    background:var(--ink);
+    color:var(--paper);
+    border-radius:var(--radius);
+    max-width:var(--measure);
+  }
+  .cta p{
+    font-family:var(--font-body);
+    font-size:1.1rem;
+    margin:0 0 18px;
+    color:var(--paper);
+  }
+  .cta-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    font-family:var(--font-display);
+    font-weight:600;
+    font-size:14px;
+    color:var(--ink);
+    background:var(--accent);
+    border:none;
+    padding:13px 22px;
+    border-radius:var(--radius);
+    cursor:pointer;
+    text-decoration:none;
+    transition:background 160ms ease, transform 160ms ease;
+  }
+  .cta-btn:hover{ background:#D3782F; transform:translateY(-1px); }
+
+  footer{
+    max-width:1100px;
+    margin:0 auto;
+    padding:36px 24px 56px;
+    font-family:var(--font-display);
+    font-size:12.5px;
+    color:var(--ink-soft);
+    display:flex;
+    justify-content:space-between;
+    gap:16px;
+    flex-wrap:wrap;
+    border-top:1px solid var(--rule);
+  }
+
+  @media (max-width:640px){
+    .hero{ padding:76px 20px 56px; }
+    main{ padding:44px 0 24px; }
+    section.milestone{ padding:40px 0; }
+  }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<header class="hero grid-bg">
+  <div class="hero-inner">
+    <div>
+      <p class="kicker"><span class="dash"></span>UNITECH Engineering Story Series — 20 Years, 2006–2026</p>
+      <h1>What if the machine you rely on today didn't exist yesterday?</h1>
+      <p class="dek">Someone had to build it first.</p>
+    </div>
+    <!-- <svg class="hero-schematic" viewBox="0 0 300 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Line drawing of a screen printing frame with registration marks">
+      <rect class="draw" x="30" y="30" width="240" height="160"></rect>
+      <line class="draw" x1="30" y1="70" x2="270" y2="70"></line>
+      <line class="draw" x1="30" y1="150" x2="270" y2="150"></line>
+      <line class="draw accent" x1="150" y1="30" x2="150" y2="190"></line>
+      <circle class="draw accent" cx="150" cy="110" r="26"></circle>
+      <line class="draw" x1="10" y1="30" x2="20" y2="30"></line>
+      <line class="draw" x1="10" y1="190" x2="20" y2="190"></line>
+      <line class="draw" x1="10" y1="30" x2="10" y2="190"></line>
+      <circle class="dot" cx="150" cy="110" r="4"></circle>
+      <circle class="dot" cx="30" cy="30" r="3"></circle>
+      <circle class="dot" cx="270" cy="30" r="3"></circle>
+      <circle class="dot" cx="30" cy="190" r="3"></circle>
+      <circle class="dot" cx="270" cy="190" r="3"></circle>
+    </svg> -->
+    <svg class="hero-flag" viewBox="0 0 360 240" xmlns="http://www.w3.org/2000/svg"
+     role="img" aria-label="Indian national flag">
+
+  <!-- Flag -->
+  <rect x="20" y="20" width="320" height="200"
+        fill="#FFFFFF"
+        stroke="#1a1a1a"
+        stroke-width="2"/>
+
+  <!-- Saffron -->
+  <rect x="20" y="20" width="320" height="66.67"
+        fill="#FF9933"/>
+
+  <!-- White -->
+  <rect x="20" y="86.67" width="320" height="66.67"
+        fill="#FFFFFF"/>
+
+  <!-- India Green -->
+  <rect x="20" y="153.34" width="320" height="66.66"
+        fill="#138808"/>
+
+  <!-- Ashoka Chakra -->
+  <circle cx="180" cy="120" r="30"
+          fill="none"
+          stroke="#000080"
+          stroke-width="3"/>
+
+  <!-- Chakra center -->
+  <circle cx="180" cy="120" r="3.5"
+          fill="#000080"/>
+
+  <!-- Ashoka Chakra spokes -->
+  <g stroke="#000080" stroke-width="2">
+    <line x1="180" y1="90" x2="180" y2="150"/>
+    <line x1="180" y1="90" x2="180" y2="150"
+          transform="rotate(15 180 120)"/>
+    <line x1="180" y1="90" x2="180" y2="150"
+          transform="rotate(30 180 120)"/>
+    <line x1="180" y1="90" x2="180" y2="150"
+          transform="rotate(45 180 120)"/>
+    <line x1="180" y1="90" x2="180" y2="150"
+          transform="rotate(60 180 120)"/>
+    <line x1="180" y1="90" x2="180" y2="150"
+          transform="rotate(75 180 120)"/>
+    <line x1="180" y1="90" x2="180" y2="150"
+          transform="rotate(90 180 120)"/>
+    <line x1="180" y1="90" x2="180" y2="150"
+          transform="rotate(105 180 120)"/>
+    <line x1="180" y1="90" x2="180" y2="150"
+          transform="rotate(120 180 120)"/>
+    <line x1="180" y1="90" x2="180" y2="150"
+          transform="rotate(135 180 120)"/>
+    <line x1="180" y1="90" x2="180" y2="150"
+          transform="rotate(150 180 120)"/>
+    <line x1="180" y1="90" x2="180" y2="150"
+          transform="rotate(165 180 120)"/>
+  </g>
+
+  <!-- Flag pole -->
+  <line x1="10" y1="15" x2="10" y2="225"
+        stroke="#222"
+        stroke-width="4"/>
+
+  <!-- Pole base -->
+  <line x1="0" y1="225" x2="35" y2="225"
+        stroke="#222"
+        stroke-width="4"/>
+</svg>
+  </div>
+</header>
+
+<div class="article-wrap">
+  <nav class="rail" aria-label="Milestone timeline">
+    <ol id="rail-list">
+      <li data-target="m-2006"><button>2006 — Ecomatic</button></li>
+      <li data-target="m-2007"><button>2007 — SDS</button></li>
+      <li data-target="m-2008"><button>2008 — Mega Machines</button></li>
+      <li data-target="m-2009"><button>2009 — Auto Take</button></li>
+      <li data-target="m-2013"><button>2013 — Optical Electronics</button></li>
+      <li data-target="m-2018"><button>2018 — UniWash</button></li>
+      <li data-target="m-2022"><button>2022 — UniStretch</button></li>
+      <li data-target="m-lesson"><button>The pattern</button></li>
+    </ol>
+  </nav>
+
+  <main>
+    <div class="lede">
+      <p>Every screen printing business owner has stood in front of a machine and thought: <em>this is just how it's done.</em> The auto-take system that pulls prints off the belt. The diagnostic panel that tells you what's wrong before you call a technician. The frame that stretches a screen twice the size anyone said was possible.</p>
+      <p>None of that was inevitable. Every one of those machines exists because, at some point, a customer had a problem no catalogue could solve — and someone had to build the answer from scratch. This is the story of what that actually looks like, told through eight moments over twenty years.</p>
+    </div>
+
+    <section class="milestone" id="m-2006">
+      <div class="m-head">
+        <div class="m-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16"/><path class="accent" d="M4 9h16M4 15h16"/></svg>
+        </div>
+        <div class="m-titles">
+          <span class="m-year">2006 · Ecomatic</span>
+          <h2>When automation felt out of reach</h2>
+        </div>
+      </div>
+      <p>For a long time, automation in screen printing meant one thing: expensive. Small and mid-sized print shops watched larger competitors automate while they stayed dependent on manual labor — not because they didn't want consistency, but because the cost of getting it felt out of reach.</p>
+      <p>The real question wasn't "how do we build a better machine." It was: <em>how do we make automation something more businesses can actually afford?</em> That shift — from automation as a luxury to automation as something accessible — became <strong>Ecomatic</strong>, India's first economical automation platform, built to handle everything from paper to metal to plastic in one frame.</p>
+    </section>
+
+    <section class="milestone" id="m-2007">
+      <div class="m-head">
+        <div class="m-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg>
+        </div>
+        <div class="m-titles">
+          <span class="m-year">2007 · Self Diagnostic System</span>
+          <h2>When the machine goes quiet and no one knows why</h2>
+        </div>
+      </div>
+      <p>Automation solves one problem and creates another: when something stops working, most shops are stuck guessing. A machine halts mid-run, and the operator's only tools are trial, error, and a phone call to service.</p>
+      <p>The problem underneath that is simple — <strong>not knowing is what actually costs time.</strong> So instead of just fixing breakdowns faster, the question became: why can't the machine tell you what's wrong itself? That became <strong>SDS</strong> — turning "unknown" into information, and cutting the gap between a machine stopping and a problem getting solved.</p>
+    </section>
+
+    <section class="milestone" id="m-2008">
+      <div class="m-head">
+        <div class="m-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><rect x="7" y="7" width="10" height="10"/><rect class="accent" x="3" y="3" width="18" height="18"/></svg>
+        </div>
+        <div class="m-titles">
+          <span class="m-year">2008 · Mega Machines, 166×166 → 332×332</span>
+          <h2>When the machine you need doesn't exist yet</h2>
+        </div>
+      </div>
+      <p>Sometimes the issue isn't quality or downtime — it's that your requirement simply isn't on the market. A customer needing a 166×166 format searched across India and found nothing built for that scale. Standard machines topped out well below what the job required.</p>
+      <p>That's a different kind of problem: not "how do we improve this," but "does this even exist?" The answer was to build it — and then, two years later, to go bigger again, engineering a 332×332 frame that held size and tension under control at a scale no standard machine had attempted. Both exist today because someone said "let's take the challenge" instead of "that's not available."</p>
+    </section>
+
+    <section class="milestone" id="m-2009">
+      <div class="m-head">
+        <div class="m-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M3 12h13"/><path class="accent" d="M13 6l6 6-6 6"/></svg>
+        </div>
+        <div class="m-titles">
+          <span class="m-year">2009 · Auto Take System</span>
+          <h2>When the technology is ready before the market is</h2>
+        </div>
+      </div>
+      <p>Not every good idea gets adopted immediately. The first automatic take-off system launched in 2009, promising less manual handling and fewer rejected prints from inconsistent pulls. The technology worked. Adoption still took a decade.</p>
+      <p>That's a real problem too, and an easy one to get wrong: assuming a slow start means a bad idea. What it actually meant was that the industry's mindset needed time to catch up — until automation went from "optional extra" to "necessary."</p>
+    </section>
+
+    <section class="milestone" id="m-2013">
+      <div class="m-head">
+        <div class="m-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2"/><circle class="accent" cx="18" cy="18" r="2"/><path d="M8 6h6a4 4 0 0 1 4 4v6"/></svg>
+        </div>
+        <div class="m-titles">
+          <span class="m-year">2013 · Optical Electronics</span>
+          <h2>When your industry starts changing shape</h2>
+        </div>
+      </div>
+      <p>By 2013, screen printing itself was evolving — some customers weren't printing designs anymore, they were printing circuits. Mesh and frames were being asked to lay down PCB traces and diode components for a new field: printed electronics.</p>
+      <p>That's a problem of direction, not defects — figuring out where the industry is actually headed and whether your equipment can go there with it. Reaching into research labs and institutes to support that shift meant screen printing stopped being just a print process and started being a manufacturing platform for electronics.</p>
+    </section>
+
+    <section class="milestone" id="m-2018">
+      <div class="m-head">
+        <div class="m-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 1 1-12 0c0-4.5 6-11 6-11z"/><path class="accent" d="M9 15a3 3 0 0 0 3 3"/></svg>
+        </div>
+        <div class="m-titles">
+          <span class="m-year">2018 · UniWash</span>
+          <h2>When "good enough" mesh cleaning isn't good enough</h2>
+        </div>
+      </div>
+      <p>For screen washing, the recurring complaints were consistent: too much manual labor, too much water wasted, and mesh quality that varied from wash to wash. None of those are exotic problems — they're the kind that quietly erode margins every single day.</p>
+      <p>Solving all three at once, without trading one for another, became <strong>UniWash</strong> — a fully automatic, enclosed washing system built around one customer's specific need for water savings, which then became a standard offering because the problem turned out to be universal.</p>
+    </section>
+
+    <section class="milestone" id="m-2022">
+      <div class="m-head">
+        <div class="m-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M4 12h4M16 12h4"/><path class="accent" d="M8 8l-4 4 4 4M16 8l4 4-4 4"/></svg>
+        </div>
+        <div class="m-titles">
+          <span class="m-year">2022 · UniStretch, worldwide patent</span>
+          <h2>When one solution needs to fit every size</h2>
+        </div>
+      </div>
+      <p>The last piece was flexibility itself. A stretching technology that only works for one frame size isn't really solving the underlying problem — which is that print businesses grow, shrink, and diversify, and their equipment needs to grow with them.</p>
+      <p><strong>UniStretch</strong>, now under worldwide patent, was built around that idea directly: one core system, engineered to scale across small, medium, large, and custom mega frames — so the technology doesn't get outgrown.</p>
+    </section>
+
+    <blockquote class="pull">
+      As long as the dream grows, the machine can grow with it.
+      <cite>— UNITECH, on UniStretch</cite>
+    </blockquote>
+
+    <section class="closing" id="m-lesson">
+      <h2 style="margin-bottom:16px;">The pattern underneath all of it</h2>
+      <p>None of these machines started as a spec sheet. Every one started as a specific business hitting a specific wall — cost, downtime, missing capacity, wasted water, an industry shifting under their feet — and a decision to solve it rather than wait for someone else to.</p>
+      <p>That's really the lesson in twenty years of milestones: the machine on your floor today is the result of a problem someone refused to leave unsolved. The next machine your business needs might not exist yet either.</p>
+
+      <div class="cta">
+        <p><strong>Want to know if the solution you need has already been built — or needs to be?</strong></p>
+        <a class="cta-btn" href="#" id="cta-link">Talk to UNITECH's engineering team</a>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer>
+  <span>UNITECH Engineering Story Series</span>
+  <span>20-Year Milestone · 2006–2026</span>
+</footer>
+
+<script>
+(function(){
+  // scroll progress bar
+  var bar = document.getElementById('progress');
+  function updateProgress(){
+    var h = document.documentElement;
+    var scrolled = h.scrollTop;
+    var max = h.scrollHeight - h.clientHeight;
+    bar.style.width = (max > 0 ? (scrolled / max) * 100 : 0) + '%';
+  }
+  document.addEventListener('scroll', updateProgress, { passive:true });
+  updateProgress();
+
+  // timeline rail: click to scroll
+  var items = Array.prototype.slice.call(document.querySelectorAll('#rail-list li'));
+  items.forEach(function(li){
+    var btn = li.querySelector('button');
+    var targetId = li.getAttribute('data-target');
+    btn.addEventListener('click', function(){
+      var el = document.getElementById(targetId);
+      if(el){ el.scrollIntoView({ behavior:'smooth', block:'start' }); }
+    });
+  });
+
+  // scrollspy via IntersectionObserver
+  var sections = items.map(function(li){
+    return document.getElementById(li.getAttribute('data-target'));
+  }).filter(Boolean);
+
+  // scrollspy: mark the last section whose top has passed the activation line
+  var ticking = false;
+  function updateActive(){
+    var activationLine = window.innerHeight * 0.3;
+    var current = 0;
+    sections.forEach(function(s, i){
+      var rect = s.getBoundingClientRect();
+      if(rect.top <= activationLine){ current = i; }
+    });
+    items.forEach(function(i){ i.classList.remove('active'); });
+    if(items[current]) items[current].classList.add('active');
+    ticking = false;
+  }
+  document.addEventListener('scroll', function(){
+    if(!ticking){ window.requestAnimationFrame(updateActive); ticking = true; }
+  }, { passive:true });
+  updateActive();
+})();
+</script>
+
+</body>
+</html>
